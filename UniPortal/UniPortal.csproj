@@ -7,7 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Data\" />
+    <Compile Remove="Controllers\CourseController.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Controllers\CourseController.cs" />
   </ItemGroup>
 
   <ItemGroup>
