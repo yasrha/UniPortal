@@ -21,7 +21,7 @@ namespace UniPortal.Models
     {
         [Key]
         public int StudentID { get; set; }
-        public string Password { get; set; }  // Store hashed password
+        public string PasswordHash { get; set; }  // Store hashed password
         public string FullName { get; set; }
         public DateTime DateOfBirth { get; set; }
         public List<StudentCourse> StudentCourses { get; set; }

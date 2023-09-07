@@ -12,6 +12,6 @@ namespace UniPortal.Models
     {
         [Key]
         public int AdminID { get; set; }
-        public string Password { get; set; }  // Store hashed password
+        public string PasswordHash { get; set; }  // Store hashed password
     }
 }
