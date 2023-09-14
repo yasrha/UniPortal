@@ -14,6 +14,8 @@ namespace UniPortal.Controllers
      * abstracted away by the framework, which results in cleaner, shorter, and more 
      * maintainable code.
      * 
+     * Assuming this were to be used in a real setting, we must consider recieving several requests 
+     * at a time, so we use async functions to improve efficiency, scalability, and concurrancy.
      */
     [ApiController]
     [Route("api/course")]
@@ -63,6 +65,41 @@ namespace UniPortal.Controllers
             }
         }
 
+        /**
+		 * HTTP GET by ID method
+		 * 
+		 * Returns a single course, retrieved by passing in the id of the course.
+		 */
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetCourse(int id)
+        {
+            try
+            {
+                // Send request to get a course by its id
+                var course = await _context.Courses.FirstOrDefaultAsync(c => c.CourseID == id);
+                if (course == null)
+                {
+                    return NotFound();
+                }
+                return Ok(course);
+            }
+            catch (DbException dbEx)
+            {
+                // Log the exception details
+                _logger.LogError(dbEx, "An error occurred while querying the database.");
+
+                // Return a generic error message to the client
+                return StatusCode(500, "An error occurred while processing your request.");
+            }
+            catch (Exception ex)
+            {
+                // Log the exception details
+                _logger.LogError(ex, "An unexpected error occurred.");
+
+                // Return a generic error message to the client
+                return StatusCode(500, "An unexpected error occurred.");
+            }
+        }
 
     }
 }
