@@ -193,6 +193,42 @@ namespace UniPortal.Controllers
             }
         }
 
+        /**
+        * HTTP DELETE method
+        * 
+        * Deletes a course from the database given the course ID.
+        */
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteCourse(int id)
+        {
+            try
+            {
+                // Find the course given its ID
+                var course = await _context.Courses.FindAsync(id);
+                if (course == null)
+                {
+                    return NotFound();
+                }
+
+                // Remove the course and save the changes
+                _context.Courses.Remove(course);
+                await _context.SaveChangesAsync();
+
+                return NoContent();
+            }
+            catch (DbUpdateException dbEx)
+            {
+                _logger.LogError(dbEx, $"DbException occurred while trying to delete course with ID {id}.");
+                return StatusCode(500, "An error occurred while trying to delete the course. Please try again later.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"An unexpected error occurred while trying to delete course with ID {id}.");
+                return StatusCode(500, "An unexpected error occurred. Please try again later.");
+            }
+        }
+
+
 
     }
 }
