@@ -146,5 +146,53 @@ namespace UniPortal.Controllers
             }
         }
 
+        /**
+        * HTTP PUT method
+        * 
+        * Updates a course in the database.
+        */
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutCourse(int id, Course course)
+        {
+            if (id != course.CourseID)
+            {
+                return BadRequest();
+            }
+
+            try
+            {
+                // Update the record that corresponds to course in the database.
+                _context.Entry(course).State = EntityState.Modified;
+
+                // Using the asynchronous SaveChanges method
+                await _context.SaveChangesAsync();
+
+                return Ok(course);
+            }
+            catch (DbUpdateConcurrencyException ex) // If the course doesnt exist
+            {
+                if (!_context.Courses.Any(e => e.CourseID == id))
+                {
+                    return NotFound(); // Not found if trying to update a non-existent course
+                }
+                else
+                {
+                    _logger.LogError(ex, "Concurrency exception while updating course with ID {CourseID}.", id);
+                    return StatusCode(500, "An error occurred while updating the course. Please try again.");
+                }
+            }
+            catch (DbUpdateException ex)
+            {
+                _logger.LogError(ex, "Database exception while updating course with ID {CourseID}.", id);
+                return StatusCode(500, "An error occurred while updating the course. Please check the data and try again.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An unexpected error occurred while updating course with ID {CourseID}.", id);
+                return StatusCode(500, "An unexpected error occurred while processing your request.");
+            }
+        }
+
+
     }
 }
