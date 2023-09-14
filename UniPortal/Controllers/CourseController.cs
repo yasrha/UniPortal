@@ -101,5 +101,50 @@ namespace UniPortal.Controllers
             }
         }
 
+        /**
+		 * HTTP POST method
+		 * 
+		 * Adds a new course to the database.
+		 * 
+		 * Must take Sub and ClassNumber attributes. 
+		 * 
+		 * [FromBody] because we are going to deserialize the parameters from the request body
+		 * in JSON form.
+		 */
+        [HttpPost]
+        public async Task<IActionResult> CreateCourse([FromBody] CourseDTO courseDto)
+        {
+            try
+            {
+                // Pre error checking
+                if (courseDto == null)
+                {
+                    return BadRequest("Course object is null");
+                }
+
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest("Invalid model object");
+                }
+
+                // Creating a new course object to add to the DB
+                var course = new Course
+                {
+                    Sub = courseDto.Sub,
+                    ClassNumber = courseDto.ClassNumber
+                };
+
+                await _context.Courses.AddAsync(course); // Adding the course to the DB
+                await _context.SaveChangesAsync(); // Saving changes to the DB
+
+                return CreatedAtAction(nameof(GetCourse), new { id = course.CourseID }, course);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An unexpected error occurred.");
+                return StatusCode(500, "An unexpected error occurred while processing your request.");
+            }
+        }
+
     }
 }
