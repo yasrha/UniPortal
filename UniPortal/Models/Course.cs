@@ -14,7 +14,7 @@ namespace UniPortal.Models
     {
         [Key]
         public int CourseID { get; set; }
-        public string Subject { get; set; }
+        public string Sub { get; set; }
         public int ClassNumber { get; set; }
     }
 }
